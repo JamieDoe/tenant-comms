@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { createServerClient } from '@/lib/supabase/server-client';
+import { createServerClient } from '@/lib/infrastructure/supabase/server-client';
 import { type Provider } from '@supabase/supabase-js';
 import { getBaseUrlEnvVar } from '@/lib/utils/getEnvVariables';
 import { buildEncodedMessage } from '@/lib/utils/buildEncodedErrorMessage';

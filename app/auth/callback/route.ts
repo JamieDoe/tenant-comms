@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server-client';
+import { createServerClient } from '@/lib/infrastructure/supabase/server-client';
 import { buildEncodedMessage } from '@/lib/utils/buildEncodedErrorMessage';
 
 export async function GET(request: Request) {
