@@ -24,12 +24,15 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  const { data: user } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getUser();
+  const user = data?.user ?? null;
 
-  if (!user && request.nextUrl.pathname.startsWith('/(private)')) {
-    {
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
+  if (
+    !user &&
+    !request.nextUrl.pathname.startsWith('/login') &&
+    !request.nextUrl.pathname.startsWith('/auth')
+  ) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   return supabaseResponse;

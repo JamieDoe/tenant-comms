@@ -2,6 +2,7 @@
 
 import { createBrowserClient } from '@supabase/ssr';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { getSupabaseEnvVars } from '@/lib/utils/getEnvVariables';
 
 type SupabaseSchema = Record<string, never>;
 
@@ -12,13 +13,7 @@ export function getSupabaseClient(): SupabaseClient<SupabaseSchema> {
     return client;
   }
 
-  const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const SUPABASE_PUBLISHABLE_KEY =
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-    throw new Error('Missing environment variables for Supabase');
-  }
+  const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } = getSupabaseEnvVars();
 
   client = createBrowserClient<SupabaseSchema>(
     SUPABASE_URL,
