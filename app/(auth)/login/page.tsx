@@ -1,44 +1,38 @@
-import {
-  loginWithEmail,
-  registerWithEmail,
-  signInWithGoogle,
-  signInWithMicrosoft,
-} from '@/lib/auth/auth.service';
+import Link from 'next/link';
+import { OAuthButton } from '@/components/auth/shared/oauth-button';
+import { LoginForm } from '@/app/(auth)/login/_components/login-form';
+import { FormAlert } from '@/components/auth/shared/form-alert';
+import { PageContainer } from '@/components/auth/shared/page-container';
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string; message?: string }>;
-}) {
-  const { error, message } = await searchParams;
-
+export default function LoginPage() {
   return (
-    <div>
-      <h1>TenantComms</h1>
+    <PageContainer
+      title="Welcome back! 👋"
+      description="Log in to your account to get started!"
+    >
+      <div className="flex w-full flex-col items-center gap-6">
+        <FormAlert />
+        <LoginForm />
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {message && <p style={{ color: 'green' }}>{message}</p>}
+        <div className="relative flex w-full items-center gap-4">
+          <div className="h-px flex-1 bg-gray-300" />
+          <span className="text-sm text-gray-500">or</span>
+          <div className="h-px flex-1 bg-gray-300" />
+        </div>
 
-      <form>
-        <label htmlFor="email">Email</label>
-        <input id="email" name="email" type="email" required />
+        <OAuthButton provider="google" />
+        <OAuthButton provider="azure" />
 
-        <label htmlFor="password">Password</label>
-        <input id="password" name="password" type="password" required />
-
-        <button formAction={loginWithEmail}>Log in</button>
-        <button formAction={registerWithEmail}>Sign up</button>
-      </form>
-
-      <hr />
-
-      <form action={signInWithGoogle}>
-        <button>Continue with Google</button>
-      </form>
-
-      <form action={signInWithMicrosoft}>
-        <button>Continue with Microsoft</button>
-      </form>
-    </div>
+        <p className="text-center text-sm text-gray-500">
+          Don&apos;t have an account?{' '}
+          <Link
+            href="/register"
+            className="text-primary font-medium underline-offset-4 hover:underline"
+          >
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </PageContainer>
   );
 }
