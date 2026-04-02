@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { OAuthButton } from '@/components/auth/shared/oauth-button';
 import { LoginForm } from '@/app/(auth)/login/_components/login-form';
 import { FormAlert } from '@/components/auth/shared/form-alert';
@@ -11,7 +12,9 @@ export default function LoginPage() {
       description="Log in to your account to get started!"
     >
       <div className="flex w-full flex-col items-center gap-6">
-        <FormAlert />
+        <Suspense fallback={null}>
+          <FormAlert />
+        </Suspense>
         <LoginForm />
 
         <div className="relative flex w-full items-center gap-4">
