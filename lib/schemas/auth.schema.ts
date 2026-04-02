@@ -22,4 +22,8 @@ const LoginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
-export { RegisterSchema, LoginSchema };
+const MagicLinkSchema = z.object({
+  email: z.string().email('Invalid email address'),
+});
+
+export { RegisterSchema, LoginSchema, MagicLinkSchema };

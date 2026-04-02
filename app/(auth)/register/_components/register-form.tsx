@@ -91,7 +91,7 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="relative -m-1 w-[calc(100%+0.5rem)] overflow-hidden p-1">
       <AnimatePresence mode="wait">
         {registered ? (
           <motion.div

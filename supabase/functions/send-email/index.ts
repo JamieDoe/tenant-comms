@@ -1,9 +1,9 @@
 import React from 'npm:react@18.3.1'
 import { Resend } from 'npm:resend@4.0.0'
 import { renderAsync } from 'npm:@react-email/components@0.0.22'
-import { ConfirmEmail } from './_templates/confirm-email.tsx'
-import { ResetPassword } from './_templates/reset-password.tsx'
-
+import { ConfirmEmail } from './_templates/confirm-email.template.tsx'
+import { ResetPassword } from './_templates/reset-password-email.template.tsx'
+import { MagicLinkEmail } from './_templates/magic-link-email.template.tsx'
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
@@ -11,9 +11,9 @@ Deno.serve(async (req) => {
   }
 
   const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
-  const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? 'MISSING'
+  const SITE_URL = Deno.env.get('SITE_URL') ?? 'http://localhost:3000'
 
-  if (!RESEND_API_KEY || RESEND_API_KEY === 'MISSING') {
+  if (!RESEND_API_KEY) {
     console.error('Missing RESEND_API_KEY environment variable')
     return new Response(
       JSON.stringify({
@@ -31,27 +31,28 @@ Deno.serve(async (req) => {
 
   const resend = new Resend(RESEND_API_KEY)
 
-  try { 
+  try {
     const payload = await req.text()
-
-
     const body = JSON.parse(payload)
     const user = body.user
     const { token_hash, redirect_to, email_action_type } = body.email_data
 
-    const actionUrl = new URL(`${SUPABASE_URL}/auth/v1/verify`)
-    actionUrl.searchParams.set('token', token_hash)
+    const baseUrl = redirect_to || SITE_URL
+    const actionUrl = new URL(`${baseUrl}/auth/confirm`)
+    actionUrl.searchParams.set('token_hash', token_hash)
     actionUrl.searchParams.set('type', email_action_type)
-    actionUrl.searchParams.set('redirect_to', redirect_to)
+    actionUrl.searchParams.set('next', '/dashboard')
     const actionUrlHref = actionUrl.href
 
     let subject: string
     let html: string
+    let from: string
 
     switch (email_action_type) {
       case 'signup':
       case 'email':
       case 'email_change':
+        from = 'TenantComms <welcome@tenantcomms.com>'
         subject = 'Welcome to TenantComms - Confirm your email'
         html = await renderAsync(
           React.createElement(ConfirmEmail, { actionUrl: actionUrlHref })
@@ -59,13 +60,23 @@ Deno.serve(async (req) => {
         break
 
       case 'recovery':
+        from = 'TenantComms <support@tenantcomms.com>'
         subject = 'Reset your TenantComms password'
         html = await renderAsync(
           React.createElement(ResetPassword, { actionUrl: actionUrlHref })
         )
         break
 
+        case 'magiclink':
+        from = 'TenantComms <support@tenantcomms.com>'
+        subject = 'Your TenantComms login link'
+        html = await renderAsync(
+          React.createElement(MagicLinkEmail, { actionUrl: actionUrlHref })
+        )
+        break
+
       default:
+        from = 'TenantComms <support@tenantcomms.com>'
         subject = 'TenantComms'
         html = await renderAsync(
           React.createElement(ConfirmEmail, { actionUrl: actionUrlHref })
@@ -73,7 +84,7 @@ Deno.serve(async (req) => {
     }
 
     const { error } = await resend.emails.send({
-      from: 'TenantComms <no-reply@tenantcomms.com>',
+      from,
       to: [user.email],
       subject,
       html,
@@ -84,10 +95,10 @@ Deno.serve(async (req) => {
       throw error
     }
 
-    console.log('Email sent successfully')
+    console.log('Email sent successfully to:', user.email)
   } catch (error) {
-
     if (error instanceof Error) {
+      console.error('Send email error:', error.message)
       return new Response(
         JSON.stringify({
           error: {
@@ -102,7 +113,19 @@ Deno.serve(async (req) => {
       )
     }
 
-    console.error('Send email error:', error)
+    console.error('Unknown error:', error)
+    return new Response(
+      JSON.stringify({
+        error: {
+          http_code: 500,
+          message: 'An unknown error occurred',
+        },
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    )
   }
 
   return new Response(JSON.stringify({}), {

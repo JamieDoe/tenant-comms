@@ -26,15 +26,39 @@ export async function updateSession(request: NextRequest) {
 
   const { data } = await supabase.auth.getUser();
   const user = data?.user ?? null;
+  const pathname = request.nextUrl.pathname;
 
+  // Not logged in — redirect to appropriate login
   if (
-  !user &&
-  !request.nextUrl.pathname.startsWith('/login') &&
-  !request.nextUrl.pathname.startsWith('/register') &&
-  !request.nextUrl.pathname.startsWith('/auth')
-) {
-  return NextResponse.redirect(new URL('/login', request.url));
-}
+    !user &&
+    !pathname.startsWith('/login') &&
+    !pathname.startsWith('/register') &&
+    !pathname.startsWith('/auth') &&
+    !pathname.startsWith('/tenant-portal/login')
+  ) {
+    if (pathname.startsWith('/tenant-portal')) {
+      return NextResponse.redirect(new URL('/tenant-portal/login?expired=true', request.url));
+    }
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  // Logged in — check onboarding for agent routes
+  // if (
+  //   user &&
+  //   !pathname.startsWith('/tenant-portal') &&
+  //   !pathname.startsWith('/onboarding') &&
+  //   !pathname.startsWith('/auth')
+  // ) {
+  //   const { data: profile } = await supabase
+  //     .from('profiles')
+  //     .select('agency_id')
+  //     .eq('id', user.id)
+  //     .single();
+
+  //   if (!profile?.agency_id) {
+  //     return NextResponse.redirect(new URL('/onboarding', request.url));
+  //   }
+  // }
 
   return supabaseResponse;
 }
