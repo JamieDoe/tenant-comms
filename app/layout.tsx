@@ -1,23 +1,25 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Inter } from 'next/font/google';
+import { Inter, Source_Serif_4, JetBrains_Mono } from 'next/font/google';
+import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
+
 import { cn } from '@/lib/utils/utils';
 
 import { ThemeProvider } from '@/components/providers/theme-provider';
-import { ThemeToggle } from '@/components/shared/theme-toggle';
 
-const geistHeading = Geist({ subsets: ['latin'], variable: '--font-heading' });
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const fontSans = Inter({
   subsets: ['latin'],
+  variable: '--font-sans',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const fontSerif = Source_Serif_4({
   subsets: ['latin'],
+  variable: '--font-serif',
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
 });
 
 export const metadata: Metadata = {
@@ -38,11 +40,10 @@ export default function RootLayout({
       className={cn(
         'h-full',
         'antialiased',
-        geistSans.variable,
-        geistMono.variable,
+        fontSans.variable,
+        fontMono.variable,
         'font-sans',
-        inter.variable,
-        geistHeading.variable
+        fontSerif.variable
       )}
     >
       <body className="flex min-h-full flex-col">
@@ -53,7 +54,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <ThemeToggle />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
