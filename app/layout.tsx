@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Source_Serif_4, JetBrains_Mono } from 'next/font/google';
-import { Toaster } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
 import { cn } from '@/lib/utils/utils';

@@ -10,10 +10,16 @@ import { type ActionType } from '../utils/errors';
 import { LoginSchema, RegisterSchema } from '../schemas/auth.schema';
 
 export async function loginWithEmail(formData: FormData): Promise<ActionType> {
-  const { email, password } = LoginSchema.parse({
+  const parsed = LoginSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
   });
+
+  if (!parsed.success) {
+    return { success: false, error: 'Invalid email or password' };
+  }
+
+  const { email, password } = parsed.data;
 
   const supabase = await createServerClient();
 
@@ -33,11 +39,17 @@ export async function loginWithEmail(formData: FormData): Promise<ActionType> {
 export async function registerWithEmail(
   formData: FormData
 ): Promise<ActionType> {
-  const { email, password } = RegisterSchema.parse({
+  const parsed = RegisterSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
     confirmPassword: formData.get('confirmPassword'),
   });
+
+  if (!parsed.success) {
+    return { success: false, error: 'Invalid registration data' };
+  }
+
+  const { email, password } = parsed.data;
 
   const supabase = await createServerClient();
 

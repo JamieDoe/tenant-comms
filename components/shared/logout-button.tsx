@@ -5,8 +5,8 @@ import { logout } from '@/lib/auth/auth.service';
 import { Button } from '@/components/ui/button';
 
 export function LogoutButton() {
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    await logout();
   }
 
   return (

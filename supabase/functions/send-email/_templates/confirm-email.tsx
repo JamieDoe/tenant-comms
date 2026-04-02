@@ -12,20 +12,10 @@ import {
 import * as React from 'npm:react@18.3.1';
 
 interface ConfirmEmailProps {
-  supabase_url: string;
-  token_hash: string;
-  redirect_to: string;
-  email_action_type: string;
+  actionUrl: string;
 }
 
-export const ConfirmEmail = ({
-  supabase_url,
-  token_hash,
-  redirect_to,
-  email_action_type,
-}: ConfirmEmailProps) => {
-  const confirmUrl = `${supabase_url}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}`;
-
+export const ConfirmEmail = ({ actionUrl }: ConfirmEmailProps) => {
   return (
     <Html>
       <Head />
@@ -39,7 +29,7 @@ export const ConfirmEmail = ({
             Confirm your email to get started.
           </Text>
           <Section style={buttonContainer}>
-            <Button style={button} href={confirmUrl}>
+            <Button style={button} href={actionUrl}>
               Confirm your email
             </Button>
           </Section>
