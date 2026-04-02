@@ -38,11 +38,16 @@ Deno.serve(async (req) => {
     const { token_hash, redirect_to, email_action_type } = body.email_data
 
     const baseUrl = redirect_to || SITE_URL
-    const actionUrl = new URL(`${baseUrl}/auth/confirm`)
-    actionUrl.searchParams.set('token_hash', token_hash)
-    actionUrl.searchParams.set('type', email_action_type)
-    actionUrl.searchParams.set('next', '/dashboard')
-    const actionUrlHref = actionUrl.href
+  const actionUrl = new URL(`${SITE_URL}/auth/confirm`)
+actionUrl.searchParams.set('token_hash', token_hash)
+actionUrl.searchParams.set('type', email_action_type)
+
+// Extract the intended destination from redirect_to if it has one
+const redirectUrl = new URL(redirect_to || SITE_URL)
+const next = redirectUrl.searchParams.get('next') || '/dashboard'
+actionUrl.searchParams.set('next', next)
+
+const actionUrlHref = actionUrl.href
 
     let subject: string
     let html: string

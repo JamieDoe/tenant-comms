@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     | 'signup'
     | null;
   const next = searchParams.get('next') ?? '/dashboard';
+const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard';
 
   if (token_hash && type) {
     const supabase = await createServerClient();
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!error) {
-      return NextResponse.redirect(new URL(next, request.url));
+      return NextResponse.redirect(new URL(safeNext, request.url));
     }
   }
 

@@ -131,15 +131,14 @@ export async function loginWithMagicLink(formData: FormData): Promise<ActionType
   });
 
   if (error) {
-    console.error('Error sending magic link:', error);
+    return { success: false, error: 'Could not send magic link' };
   }
 
   return { success: true, data: null };
 }
 
-export async function inviteTenant(tenantId: string, email: string): Promise<ActionType> {
-  
-  const {supabase, agencyId} = await authGuards.agentGuard();
+export async function inviteTenant(tenantId: string): Promise<ActionType> {
+  const { supabase, agencyId } = await authGuards.agentGuard();
 
   const { data: tenant, error: tenantError } = await supabase
     .from('tenants')
@@ -147,23 +146,23 @@ export async function inviteTenant(tenantId: string, email: string): Promise<Act
     .eq('id', tenantId)
     .eq('agency_id', agencyId)
     .single();
-    
+
   if (tenantError || !tenant) {
-    console.error('Error fetching tenant:', tenantError);
-    return { success: false, error: 'Could not find tenant' };
+    return { success: false, error: 'Tenant not found' };
   }
 
-  const {SITE_URL} = getBaseUrlEnvVar();
+  if (!tenant.email) {
+    return { success: false, error: 'Tenant has no email address' };
+  }
+
+  const { SITE_URL } = getBaseUrlEnvVar();
   const admin = createAdminClient();
 
-  const redirectTo = `${SITE_URL}/auth/confirm?next=/tenant-portal`;
-
-  const { error} = await admin.auth.admin.inviteUserByEmail(email, {
-    redirectTo
-  })
+  const { error } = await admin.auth.admin.inviteUserByEmail(tenant.email, {
+    redirectTo: `${SITE_URL}/auth/confirm?next=/tenant-portal`,
+  });
 
   if (error) {
-    console.error('Error inviting tenant:', error);
     return { success: false, error: 'Could not send invite' };
   }
 
