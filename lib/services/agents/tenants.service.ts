@@ -21,10 +21,10 @@ export async function createFirstTenant(input: {
       phone: input.phone || null,
       property_id: input.propertyId || null,
     })
-    .select()
+    .select('id')
     .single();
 
-  if (error) {
+  if (error || !data) {
     return { success: false, error: 'Could not create tenant' };
   }
 

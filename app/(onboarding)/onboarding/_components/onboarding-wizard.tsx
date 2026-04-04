@@ -78,20 +78,23 @@ export function OnboardingWizard() {
   async function handleCreateAgency() {
     setServerError(null);
     setSubmitting(true);
-    const result = await createAgency({
-      name: agencyName,
-      email: agencyEmail || null,
-      phone: agencyPhone || null,
-    });
-    if (!result.success) {
-      setServerError(result.error);
-      showToast.error(result.error);
-      setSubmitting(false);
-      return;
-    }
 
-    setAgencyId(result.data.id);
-    goTo(1);
+    try {
+      const result = await createAgency({
+        name: agencyName,
+        email: agencyEmail || null,
+        phone: agencyPhone || null,
+      });
+      if (!result.success) {
+        setServerError(result.error);
+        showToast.error(result.error);
+        return;
+      }
+      setAgencyId(result.data.id);
+      goTo(1);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   async function handleCreateProperty() {

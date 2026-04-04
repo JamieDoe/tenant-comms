@@ -13,22 +13,22 @@ export async function createFirstProperty(input: {
 }): Promise<ActionType<{ id: string }>> {
   const supabase = await createServerClient();
 
-  const { data, error } = await supabase
-    .from('properties')
-    .insert({
-      agency_id: input.agencyId,
-      address_line_1: input.addressLine1,
-      city: input.city,
-      postcode: input.postcode,
-      property_type: input.propertyType,
-      bedrooms: input.bedrooms,
-    })
-    .select()
-    .single();
+const { data, error } = await supabase
+  .from('properties')
+  .insert({
+    agency_id: input.agencyId,
+    address_line_1: input.addressLine1,
+    city: input.city,
+    postcode: input.postcode,
+    property_type: input.propertyType,
+    bedrooms: input.bedrooms,
+  })
+  .select('id')
+  .single();
 
-  if (error) {
-    return { success: false, error: 'Could not create property' };
-  }
+if (error || !data) {
+  return { success: false, error: 'Could not create property' };
+}
 
   return { success: true, data: { id: data.id } };
 }

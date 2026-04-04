@@ -5,7 +5,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { RegisterSchema } from '@/lib/schemas/auth.schema';

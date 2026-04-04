@@ -49,15 +49,21 @@ export async function updateSession(request: NextRequest) {
   !pathname.startsWith('/onboarding') &&
   !pathname.startsWith('/auth')
 ) {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('agency_id')
-    .eq('id', user.id)
-    .single();
+const { data: profile, error: profileError } = await supabase
+  .from('profiles')
+  .select('agency_id')
+  .eq('id', user.id)
+  .single();
 
-  if (!profile?.agency_id) {
-    return NextResponse.redirect(new URL('/onboarding', request.url));
-  }
+
+if (profileError) {
+  console.error('Proxy profile check failed:', profileError.message);
+  return supabaseResponse;
+}
+
+if (!profile?.agency_id) {
+  return NextResponse.redirect(new URL('/onboarding', request.url));
+}
 }
 
   return supabaseResponse;
