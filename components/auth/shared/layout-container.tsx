@@ -24,15 +24,20 @@ const slides = [
   },
 ];
 
-export function AuthLayoutImageContainer() {
+interface LayoutImageContainerProps {
+  children?: React.ReactNode;
+}
+
+export function LayoutImageContainer({ children }: LayoutImageContainerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
+    if (children) return; // Don't auto-rotate if custom content is provided
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % slides.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, []);
+  }, [children]);
 
   return (
     <div className="relative hidden overflow-hidden lg:block lg:w-1/2">
@@ -44,7 +49,13 @@ export function AuthLayoutImageContainer() {
           alt={slide.heading}
           fill
           className={`z-0 object-cover transition-opacity duration-1000 ${
-            index === currentIndex ? 'opacity-100' : 'opacity-0'
+            children
+              ? index === 0
+                ? 'opacity-100'
+                : 'opacity-0'
+              : index === currentIndex
+                ? 'opacity-100'
+                : 'opacity-0'
           }`}
           priority={index === 0}
         />
@@ -59,7 +70,7 @@ export function AuthLayoutImageContainer() {
         }}
       />
 
-      {/* Blur layer that fades in from bottom */}
+      {/* Blur layer */}
       <div
         className="absolute inset-0 z-10 backdrop-blur-md"
         style={{
@@ -68,36 +79,42 @@ export function AuthLayoutImageContainer() {
         }}
       />
 
-      {/* Text content */}
+      {/* Bottom content */}
       <div className="absolute inset-x-0 bottom-0 z-20 p-10">
-        <h2
-          key={`heading-${currentIndex}`}
-          className="animate-fade-in text-2xl font-bold tracking-tight text-white xl:text-3xl"
-        >
-          {slides[currentIndex].heading}
-        </h2>
-        <p
-          key={`desc-${currentIndex}`}
-          className="animate-fade-in mt-2 max-w-md text-sm text-white/80 xl:text-base"
-        >
-          {slides[currentIndex].description}
-        </p>
+        {children ? (
+          children
+        ) : (
+          <>
+            <h2
+              key={`heading-${currentIndex}`}
+              className="animate-fade-in text-2xl font-bold tracking-tight text-white xl:text-3xl"
+            >
+              {slides[currentIndex].heading}
+            </h2>
+            <p
+              key={`desc-${currentIndex}`}
+              className="animate-fade-in mt-2 max-w-md text-sm text-white/80 xl:text-base"
+            >
+              {slides[currentIndex].description}
+            </p>
 
-        {/* Carousel indicators */}
-        <div className="mt-6 flex items-center gap-2">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`h-1.5 rounded-full transition-all duration-500 ${
-                index === currentIndex
-                  ? 'w-8 bg-white'
-                  : 'w-3 bg-white/40 hover:bg-white/60'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
+            {/* Carousel indicators */}
+            <div className="mt-6 flex items-center gap-2">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`h-1.5 rounded-full transition-all duration-500 ${
+                    index === currentIndex
+                      ? 'w-8 bg-white'
+                      : 'w-3 bg-white/40 hover:bg-white/60'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { showToast } from '@/lib/utils/toast';
 import Link from 'next/link';
 import { z } from 'zod';
 
@@ -45,8 +45,8 @@ export function LoginForm() {
     if (!result.success) {
       setServerError(result.error);
 
-      toast.error(result.error, {
-        description: 'Please try again.',
+      showToast.warning(result.error, {
+        description: 'Please try again later.',
       });
       return;
     }
@@ -56,7 +56,7 @@ export function LoginForm() {
     <form className="mx-auto w-full" onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
         {serverError && (
-          <div className="bg-destructive/10 text-destructive rounded-md px-4 py-3 text-sm">
+          <div className="bg-destructive/10 text-destructive rounded-xl px-4 py-3 text-sm">
             {serverError}
           </div>
         )}

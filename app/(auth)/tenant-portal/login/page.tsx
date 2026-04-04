@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { PageContainer } from '@/components/auth/shared/page-container';
-import { MagicLinkForm } from './_components/magin-link-form';
+import { MagicLinkForm } from './_components/magic-link-form';
 
 export default function RegisterPage() {
   return (

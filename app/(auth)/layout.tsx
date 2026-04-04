@@ -1,4 +1,4 @@
-import { AuthLayoutImageContainer } from '@/components/auth/shared/layout-container';
+import { LayoutImageContainer } from '@/components/auth/shared/layout-container';
 
 export default function AuthLayout({
   children,
@@ -7,7 +7,7 @@ export default function AuthLayout({
 }>) {
   return (
     <main className="flex min-h-screen w-full">
-      <AuthLayoutImageContainer />
+      <LayoutImageContainer />
       <div className="w-full p-8 lg:w-1/2">{children}</div>
     </main>
   );

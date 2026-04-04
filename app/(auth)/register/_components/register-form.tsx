@@ -5,7 +5,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { RegisterSchema } from '@/lib/schemas/auth.schema';
@@ -21,6 +20,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { PasswordValidator } from '@/components/auth/shared/password-validator';
+import { showToast } from '@/lib/utils/toast';
 
 type RegisterFormData = z.infer<typeof RegisterSchema>;
 
@@ -51,7 +51,7 @@ export function RegisterForm() {
     if (!result.success) {
       setServerError(result.error);
 
-      toast.error(result.error, {
+      showToast.error(result.error, {
         description: 'Please try again.',
       });
       return;

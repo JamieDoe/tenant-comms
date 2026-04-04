@@ -3,7 +3,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { MagicLinkSchema } from '@/lib/schemas/auth.schema';
@@ -18,6 +17,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { loginWithMagicLink } from '@/lib/auth/auth.service';
+import { showToast } from '@/lib/utils/toast';
 
 type MagicLinkFormData = z.infer<typeof MagicLinkSchema>;
 
@@ -42,7 +42,7 @@ export function MagicLinkForm() {
     if (!result.success) {
       setServerError(result.error);
 
-      toast.error(result.error, {
+      showToast.error(result.error, {
         description: 'Please try again.',
       });
       return;
