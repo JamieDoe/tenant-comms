@@ -1,28 +1,31 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
-import "./globals.css";
-import { cn } from "@/lib/utils/utils";
+import type { Metadata } from 'next';
+import { Inter, Source_Serif_4, JetBrains_Mono } from 'next/font/google';
+import { Toaster } from '@/components/ui/sonner';
+import './globals.css';
 
-import { ThemeProvider } from "@/components/providers/theme-provider";
-import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { cn } from '@/lib/utils/utils';
 
-const geistHeading = Geist({subsets:['latin'],variable:'--font-heading'});
+import { ThemeProvider } from '@/components/providers/theme-provider';
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const fontSans = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const fontSerif = Source_Serif_4({
+  subsets: ['latin'],
+  variable: '--font-serif',
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
 });
 
 export const metadata: Metadata = {
-  title: "Tenant Comms",
-  description: "Tenant communication platform built with Next.js and Tailwind CSS",
+  title: 'Tenant Comms',
+  description:
+    'Tenant communication platform built with Next.js and Tailwind CSS',
 };
 
 export default function RootLayout({
@@ -33,13 +36,26 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable, geistHeading.variable)}
+      suppressHydrationWarning
+      className={cn(
+        'h-full',
+        'antialiased',
+        fontSans.variable,
+        fontMono.variable,
+        'font-sans',
+        fontSerif.variable
+      )}
     >
-      <body className="min-h-full flex flex-col">
-        <ThemeProvider>
+      <body className="flex min-h-full flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           {children}
-        <ThemeToggle />
-          </ThemeProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
