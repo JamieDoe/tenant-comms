@@ -43,22 +43,22 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Logged in — check onboarding for agent routes
-  // if (
-  //   user &&
-  //   !pathname.startsWith('/tenant-portal') &&
-  //   !pathname.startsWith('/onboarding') &&
-  //   !pathname.startsWith('/auth')
-  // ) {
-  //   const { data: profile } = await supabase
-  //     .from('profiles')
-  //     .select('agency_id')
-  //     .eq('id', user.id)
-  //     .single();
+ if (
+  user &&
+  !pathname.startsWith('/tenant-portal') &&
+  !pathname.startsWith('/onboarding') &&
+  !pathname.startsWith('/auth')
+) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('agency_id')
+    .eq('id', user.id)
+    .single();
 
-  //   if (!profile?.agency_id) {
-  //     return NextResponse.redirect(new URL('/onboarding', request.url));
-  //   }
-  // }
+  if (!profile?.agency_id) {
+    return NextResponse.redirect(new URL('/onboarding', request.url));
+  }
+}
 
   return supabaseResponse;
 }
